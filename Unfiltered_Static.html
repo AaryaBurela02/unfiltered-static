@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Unfiltered Static</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:      #f9f7f4;
+      --card:    #ffffff;
+      --border:  #e8e4df;
+      --accent:  #2563eb;
+      --tag-1:   #dbeafe;  --tag-1t: #1d4ed8;
+      --tag-2:   #dcfce7;  --tag-2t: #166534;
+      --tag-3:   #fee2e2;  --tag-3t: #991b1b;
+      --tag-4:   #fef9c3;  --tag-4t: #854d0e;
+      --text:    #18181b;
+      --muted:   #71717a;
+      --font:    'DM Sans', system-ui, sans-serif;
+      --font-s:  'Playfair Display', Georgia, serif;
+      --nav-h:   64px;
+      --max-w:   1080px;
+      --r:       14px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      background: rgba(249,247,244,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-s);
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: var(--text);
+    }
+
+    .nav-logo span {
+      display: inline-block;
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-left: 4px;
+      vertical-align: middle;
+      position: relative;
+      top: -1px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-links a:hover { background: var(--border); color: var(--text); }
+    .nav-links a.active { background: var(--text); color: #fff; }
+
+    /* ── SECTIONS ── */
+    .page-section { display: none; padding-top: var(--nav-h); min-height: 100vh; }
+    .page-section.active { display: block; }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 60px 40px 52px;
+    }
+
+    .hero-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+    }
+
+    .hero-title {
+      font-family: var(--font-s);
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 600;
+      line-height: 1.05;
+      color: var(--text);
+      max-width: 640px;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      margin-top: 20px;
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 500px;
+      line-height: 1.75;
+    }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 40px 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .section-divider span {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .section-divider hr {
+      flex: 1;
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── GRID ── */
+    .blog-grid {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 40px 80px;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+    }
+
+    /* Featured = full width, horizontal */
+    .blog-card.featured {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+    }
+
+    /* Regular cards — 4 cols each (3 per row) */
+    .blog-card:not(.featured) { grid-column: span 4; }
+
+    .blog-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.22s, box-shadow 0.22s;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+      border-color: var(--accent);
+    }
+
+    /* All card thumbnails*/
+    .card-thumb {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.8rem;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    /* Any <img> inside a thumb fills it perfectly */
+    .card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Featured card thumb — fills the full height of the card,
+       no aspect-ratio override so nothing gets cut off          */
+    .blog-card.featured .card-thumb {
+      aspect-ratio: unset;
+      height: 100%;
+      min-height: 260px;
+      font-size: 4rem;
+    }
+
+    .blog-card.featured .card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Body */
+    .card-body {
+      padding: 24px 26px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      width: fit-content;
+    }
+
+    .card-title {
+      font-family: var(--font-s);
+      font-size: 1.35rem;
+      font-weight: 600;
+      line-height: 1.3;
+      color: var(--text);
+    }
+
+    .blog-card.featured .card-title { font-size: 1.75rem; }
+
+    .card-excerpt {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .card-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .read-more {
+      margin-top: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      transition: gap 0.2s;
+    }
+
+    .blog-card:hover .read-more { gap: 9px; }
+
+    /* ── POST VIEW ── */
+    #post-view { display: none; padding-top: var(--nav-h); min-height: 100vh; }
+    #post-view.active { display: block; }
+
+    .post-header {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 34px 40px 22px;
+    }
+
+    .post-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 28px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .post-back:hover { color: var(--accent); }
+
+    .post-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+
+    .post-title {
+      font-family: var(--font-s);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 600;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .post-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    /* Post banner — locked to 700px text column, centered */
+    .post-banner {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    .post-banner-img {
+      width: 100%;
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      overflow: hidden;
+    }
+
+    /* Any <img> inside the post banner fills it perfectly */
+    .post-banner-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 0;
+    }
+
+    .post-content {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 30px 40px 80px;
+      font-size: 1.05rem;
+      line-height: 1.85;
+    }
+
+    .post-content h2 {
+      font-family: var(--font-s);
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 30px 0 14px;
+    }
+
+    .post-content p { margin-bottom: 14px; color: #3f3f46; }
+
+    .post-content blockquote {
+      border-left: 3px solid var(--accent);
+      padding: 14px 22px;
+      margin: 28px 0;
+      background: #eff6ff;
+      border-radius: 0 8px 8px 0;
+      font-family: var(--font-s);
+      font-style: italic;
+      font-size: 1.08rem;
+      color: #374151;
+    }
+
+    /* ── ABOUT ── */
+    .about-wrap {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 68px 40px 80px;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .about-avatar {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: var(--r);
+      background: #e0e7ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 7rem;
+    }
+
+    .about-text { display: flex; flex-direction: column; gap: 18px; }
+
+    .about-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .about-name {
+      font-family: var(--font-s);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 600;
+      line-height: 1.15;
+    }
+
+    .about-bio {
+      font-size: 1rem;
+      color: #52525b;
+      line-height: 1.8;
+    }
+
+    .about-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      padding: 5px 14px;
+      border-radius: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .about-links { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .about-btn {
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .about-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .about-btn.primary { background: var(--accent); color: #fff; }
+    .about-btn.secondary { background: var(--card); border-color: var(--border); color: var(--text); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 24px 40px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 800px) {
+      nav { padding: 0 20px; }
+      .hero, .blog-grid, .post-header, .post-banner, .post-content, .section-divider { padding-left: 20px; padding-right: 20px; }
+      .blog-grid { grid-template-columns: 1fr; }
+      .blog-card.featured, .blog-card:not(.featured) { grid-column: 1 / -1; display: block; }
+      .blog-card.featured .card-thumb { height: 200px; }
+      .about-wrap { grid-template-columns: 1fr; gap: 32px; }
+    }
+
+    /* ── FADE IN ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .blog-card { animation: fadeUp 0.4s ease both; }
+    .blog-card:nth-child(2) { animation-delay: 0.07s; }
+    .blog-card:nth-child(3) { animation-delay: 0.13s; }
+    .blog-card:nth-child(4) { animation-delay: 0.19s; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Unfiltered Static<span></span></div>
+  <ul class="nav-links">
+    <li><a href="#" class="active" onclick="showSection('home',this);return false;">Home</a></li>
+    <li><a href="#" onclick="showSection('about',this);return false;">About Me</a></li>
+  </ul>
+</nav>
+
+<!-- HOME -->
+<section id="home" class="page-section active">
+
+  <div class="hero">
+    <span class="hero-label">WELCOME TO MY CORNER OF THE WEB</span>
+    <h1 class="hero-title">Dystopian<em> rambles</em></h1>
+    <p class="hero-sub">No-fluff, half-baked analyses on modern absurdity</br>straight-out of my chaotic and cynical brain</p>
+  </div>
+
+  <div class="section-divider">
+    <span>Latest posts</span>
+    <hr/>
+  </div>
+
+  <div class="blog-grid">
+
+    <!-- FEATURED -->
+    <article class="blog-card featured" onclick="openPost('post-1')">
+      <div class="card-thumb" style="background:linear-gradient(135deg,#dbeafe,#bfdbfe);">⚙️🛠️</div>
+      <div class="card-body">
+        <p class="card-tag" style="background:var(--tag-1);color:var(--tag-1t);">CAREER</p>
+        <h2 class="card-title">Gearing up for the industrial nowhere</h2>
+        <p class="card-excerpt">Fasten your seat belts as I take you through the carefully jotted-down rants from two years of my budding professional life in an almost patriarchal sector you may never experience.</p>
+        <div class="card-meta"><span>May 24, 2026</span><span>·</span><span>10 min read</span></div>
+        <span class="read-more">Read this one →</span>
+      </div>
+    </article>
+
+    
+    <!--
+    <article class="blog-card" onclick="openPost('post-2')">
+      <div class="card-thumb" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0);">🌿</div>
+      <div class="card-body">
+        <p class="card-tag" style="background:var(--tag-2);color:var(--tag-2t);">Travel</p>
+        <h2 class="card-title">A Weekend in the Western Ghats</h2>
+        <p class="card-excerpt">Mist, sore knees, and the best filter coffee of my life. A small trip that fixed my brain for three days.</p>
+        <div class="card-meta"><span>May 10, 2026</span><span>·</span><span>4 min read</span></div>
+        <span class="read-more">Read this one →</span>
+      </div>
+    </article>
+    -->
+
+    <!--
+    <article class="blog-card" onclick="openPost('post-3')">
+      <div class="card-thumb" style="background:linear-gradient(135deg,#fee2e2,#fecaca);">📚</div>
+      <div class="card-body">
+        <p class="card-tag" style="background:var(--tag-3);color:var(--tag-3t);">Books</p>
+        <h2 class="card-title">5 Books That Changed How I See the World</h2>
+        <p class="card-excerpt">Not the productivity ones. The quiet, weird ones that snuck up and rearranged something in how I think.</p>
+        <div class="card-meta"><span>Apr 28, 2026</span><span>·</span><span>6 min read</span></div>
+        <span class="read-more">Read this one →</span>
+      </div>
+    </article>
+    -->
+
+    <!--
+    <article class="blog-card" onclick="openPost('post-4')">
+      <div class="card-thumb" style="background:linear-gradient(135deg,#fef9c3,#fef08a);">☕</div>
+      <div class="card-body">
+        <p class="card-tag" style="background:var(--tag-4);color:var(--tag-4t);">Lifestyle</p>
+        <h2 class="card-title">Why I Started a Morning Routine (And Actually Kept It)</h2>
+        <p class="card-excerpt">No 4 AM alarms, no ice baths. Just one boring small thing that somehow works every single day.</p>
+        <div class="card-meta"><span>Apr 15, 2026</span><span>·</span><span>3 min read</span></div>
+        <span class="read-more">Read this one →</span>
+      </div>
+    </article>
+    -->
+
+  </div>
+
+  <footer>© 2026 Unfiltered Static · 34% Human-crafted website</footer>
+</section>
+
+
+
+<!-- ABOUT -->
+<section id="about" class="page-section">
+  <div class="about-wrap">
+    <div class="about-avatar">
+  <img src="hero.jpg" alt="Your Name" style="width:100%;height:100%;object-fit:cover;border-radius:var(--r);"/>
+</div>
+    <div class="about-text">
+      <p class="about-label">Hey there 👋</p>
+      <!-- ✏️ EDIT: your name -->
+      <h2 class="about-name">I'm A(a?)rya!</h2>
+      <!-- ✏️ EDIT: your bio -->
+      <p class="about-bio">A budding critical thinker with a decent job, striving to explore eclectic and mutually exclusive domains to quench the curiosity within me.</p>
+      <p class="about-bio">This blog is, rather, a repository of opinionated memories worth recording — an endaevor to think critically, improve my writing, and sustain human creativity in an increasingly generalised AI world. </p>
+      <!-- ✏️ EDIT: your chips -->
+      <div class="about-chips">
+        <span class="chip">Dance</span>
+        <span class="chip">Travel</span>
+        <span class="chip">Books</span>
+        <span class="chip">Pilani</span>
+        <span class="chip">Andhra</span>
+      </div>
+      <div class="about-links">
+        <!--  <a href="mailto:aaryaburela2@gmail.com"><button class="about-btn primary">Say hello ✉️</button></a> -->
+      </div>
+    </div>
+  </div>
+  <footer>© 2026 Unfiltered Static · 34% Human-crafted website</footer>
+</section>
+
+<!-- POST VIEW -->
+<div id="post-view">
+  <div class="post-header">
+    <div class="post-back" onclick="closePost()">← Back to all posts </div>
+    <p class="post-tag" id="post-tag-display"></p>
+    <h1 class="post-title" id="post-title-display"></h1>
+    <div class="post-meta" id="post-meta-display"></div>
+  </div>
+  <div class="post-banner">
+    <div class="post-banner-img" id="post-banner-display"></div>
+  </div>
+  <div class="post-content" id="post-content-display"></div>
+  <footer>© 2026 Unfiltered Static · 34% Human-crafted website</footer>
+</div>
+
+<script>
+  const POSTS = {
+    'post-1': {
+      tag:'CAREER', tagBg:'#dbeafe', tagColor:'#1d4ed8',
+      title:'Gearing up for the industrial nowhere',
+      date:'May 24, 2026', readTime:'10 min read',
+      bannerBg:'transparent', bannerEmoji:'', bannerImg:'illustration home.jpg',
+      content:`
+        <p>A managerial and mechanical freak that I am, I always used to ponder what to choose between these during the placement season. The benchmarking was too tight and indecisive that I so desperately wanted to do both. But believe it or not someone over the zenith of our hierarchy always makes it possible for the ones who aspires relentlessly. So, eventually with that obstinacy I bagged the job in an industrial sector with a 'Manager' tag stuck on me. <i>Vroom! Straight up to manager — how about grabbing a Head-start in Subway Surfers?!</i></p>
+        
+        <h2>The Honeymoon Period</h2>
+        <p>Barely out of Pilani's gates I was thrown into the grind of onboarding process and then the training period, which felt like forever, along with 150 others. Disparately, overall, it had air-conditioned Auditorium sessions and grueling plant visits designed to fry you with the radiation of liquid steel. Hardships aside, the visits unequivocally quenched the curious engineer in me — ranging from KGF entrance feels to nape-aching, monstrous, tier-2-apartment-sized machines. <i>Ever heard of the beast, stacker-reclaimer?!</i> 
+        <p>Nonetheless, I almost used to skip them to scroll in my room, wander around the city, or plan a trip for home, as there were only 2-3 supervisors allotted to manage such a huge group. <i>Tactics they say!</i> To make it easier, we were allotted a hostel with eclectic sport facilities, serene lawns, seasonal events, and a top-class fully furnished room that reflected a campus-vibe with exceptional elite-batch treatment. Never forget the perks you get graduating from Tier-1 college. And that's how I realised why they call it a honey-moon period rather than a training period.</p>
+        <p>Fast forward — after triumphantly squandering around, oblivious to the passage of a year — we were finally allowed to choose the roles and locations we wanted to join, and the allotment was done according to the ranks tabulated from our performance as trainee. I was satisfactorily glad to find myself in the above-average section, especially after doing nothing — literally nothing! Post-discussions and chaotic contemplations, I ultimately decided a role simply because I'd heard it didn't have much workload, <i>Not that I'm lazy, you dumbo — but it's that I could think calmly in a pressure-less environment</i>, with an acceptable trade-off of working in a remote village in Orissa, which is absolutely fair for a bachelor who despises metro cities.
+        
+        <h2>Entry to the Dungeon</h2>
+        <p>With a dubious naïve face and zero clue on my job role, I entered the office where I would be working under and alongside officers who were literally doubly aged to me. In fact, according to my JD, I ought to make employees work whose work experience was around my age. Throughout my childhood, I was never completely able to decode my father's or his generation's ideology, and now surrounded by these many people with similar traits, OMG — this was going to be a roller coaster ride. But needless to say, making yourself agile and adapting to the dynamics of work environment is a corporate survival skill.</p>
+        <p>Sooner, things sped up, it was high time I used my rusted-cum-rotted brain and put it to work. With such a huge responsibility, I had to learn things within a few months that the officers worked it out in 2-3 years. <i>Haha, so reasonable, isn't it?</i> The conversations at the workplace went from casual small talks to reprimands and slowly escalated to acrimonious humiliations just to push me forward to work better. Initially that hurt, but I moved on with a smile plastered on my face, acknowledging that I've faced much rude taunts before. I don't blame anyone because it's the kind of culture that got incubated out here, and I doubt if it's the same in every manufacturing industry. But it's definitely way better than the veiled and nerdy code-geek conversations which I feel so fake.</p>
+        <p>Evidently, I used to be the most boisterous and odd one out during some conversations due to the visible technical-acumen gap between me and my bosses. With random Tollywood and anime stuff running through my head, I slide into daydreaming in the mid of offline meetings. Probably I was not done with my campus life, where I used to skip every word, my professor spat out, merely with a confidence that I had slides and good amount of material lying there dusted to refer. <i>Damn you, zero-percent attendance policy — I miss you</i></p>
+        
+        <img src="illustration day dream.jpg" alt="describe the image" style="width:100%;height:auto;display:block;margin:24px auto;"/>
+
+        <h2>Ego-fueled Monsters</h2>
+        <p>Everything was going decent until you begin noticing — and eventually abhorring — the contemptuous smirk on the faces you approach for a KT. Is it the envy they flash at a kid who just graduated and somehow managed to snatch a hierarchically better position? You never know. And for sure, no one's here a stoic, capable of subjugating their secondary emotions. You could almost sense their ego steaming out and finding satisfaction when you cravingly asked them for help—because in a company, everyone guards their own technical expertise and there is no other way than asking. </p>
+        <p>Had a two-hour YouTube video titled “How to survive in corporate?” had existed — something I could have pulled an all nighter for and wrapped up by binging at 2x speed similar to the night before a campus test — I would have ignored pleading with such brats altogether without facing resentment. But not until you realize that such a convenient luxury is long gone that you end up learning things by pleading, because every company has its own guidelines, principles, abbreviations, and procedures that must be adhered to and are far from open-sourced.</p>
+        
+        <h2>The Armor of Resistance</h2>
+        <p>I used to have a tad bit of interest in the way I styled myself. That I hadn't bagged a 6 month internship in Bangalore, I would have been the same guy with dry fashion sense. As a metro city changes you in the way it does, I slowly started paying attention to my outfits now and then. Once I joined here, though, outfits became a joke. Not that you can't wear modern clothes — but they'll anyway get ruined by the tough offline fieldwork you end up doing. And on top of that, once you strap on the Armor called fire resistant P.P.E., any sense of fashion becomes impossible as it conceals almost everything above your hips. </p>
+
+        <h2>The Metalworks of Hephaestus</h2>
+        <p>Equipment in a plant needs real-time monitoring and periodic repair cycles to avoid unplanned outages and humongous recovery costs. Operating such machines demand tight planning and a massive budget, which is exactly why you see operating costs always skyrocket if you flip-over the financials of any manufacturing company. Some jobs are forever. Some are too boring. Others are incredibly tough. Imagine being stuck inside an enclosed, dark elevator along with five other teammates who are servicing it — with an unfunctional fan, a wired bulb dangling just enough light to see the area to repair, and metal walls grilling up like a furnace. It gets too humid to breathe, too congested to make a move, and God help you if you're claustrophobic. In that suffocating atmosphere, you get pathetically drenched in sweat within minutes and start desperately wishing you could dive straight into a cold-water river.</p>
+        <p>During a routine maintenance chore of an equipment along with my team, a fitter beside me took out a crumpled transparent plastic pouch from his pocket. It contained some irregularly shaped blackish-brown solids, and I had no clue what that stuff was, though it seemed edible. Although it had been a few months since I joined, I wasn't well acquainted with the local culture or food. Usually, namkeen is the go-to thing to nibble-on between breaks, so this was something clearly new. While I was still pondering what it could be, he casually untied the thread holding the pouch, shoved his disgustingly greasy hand into it, grabbed a handful, and gobbled them up. I was like..no..W T F did I witness. My OCD levels spiked instantly. Noticing me stare him, he benevolently offered some to me. I tried ignoring to avoid repeating the same circus he did. But it was too late. Watching me stepping away, he grabbed my already tainted and greased hand, dumped some pieces onto it, and gestured to eat. <i>The one who doesn't have his gut greased is no mechanical engineer.</i> For one last time, I convinced myself, and had them in one go. Not bad. I repeated the same a few more times due to inevitable situations, and now I probably have grease floating in my abdomen. But whatever it was, I wanted this — not a greasy gut, but having my hands run over sophisticated equipment instead of a laptop keyboard. </p>
+
+        <h2>Kneeling infront of the Almighty</h2>
+        <p>Machines are surely divine to industrialists — here, I've seen them venerate from the bottom of their hearts. Every officer before ascending the equipment building taps the handrailing of staircase, puts his fingers on his chest with eyes closed and chants to let the day go smoother as it has been yesterday.</p>
+        <blockquote>A devotional enactment of his surrender to the omnipotence of machines and a confession to spend his life serving forever.</blockquote>
+        <p>Every department has a Vishwakarma portrait, the god of architecture, hung up in offices symbolizing their <i>deep</i> love and respect for the equipment they work with. Indeed, adding a superlative to “deep” makes it much appropriate, to express the intensity of their emotional connection. When you spend almost eighty percent of your life around these machines, it's not surprising to celebrate them and perform rituals in the name of 'Vishwakarma Puja.'</p>
+
+        <h2>Wielding the Sword</h2>
+        Gradually, the veil between me and them started to fade, slowly, by letting myself get dragged into their culture — something I thought would never happen seeing how immiscible I used to be. Not lately I started noticing my jeans tainted, hands greased, and body extensively exhausted after my work hours. Those are the signs that signal you're finally getting a taste of what being an engineer is. But ranting aside these industrial guys are built different. Who would keep their life at stake and work in a corporate, which runs for profits? Its probably their immaculate passion over the work they do. Some jobs are so breath-taking that even a single error can cost you hundreds of lives or cause a serious disaster. The man of steel is a myth — or so I thought, until I witnessed these ones.
+
+      `
+    },
+    'post-2': {
+      tag:'Travel', tagBg:'#dcfce7', tagColor:'#166534',
+      title:'A Weekend in the Western Ghats',
+      date:'May 10, 2026', readTime:'4 min read',
+      bannerBg:'linear-gradient(135deg,#dcfce7,#bbf7d0)', bannerEmoji:'🌿',
+      content:`
+        <p>We left Bangalore at five in the morning, before the city's infamous traffic woke up, and hit the Mysore highway with the windows down and a flask of chai balanced between the seats.</p>
+        <h2>The First Morning</h2>
+        <p>The Ghats don't reveal themselves gradually — they arrive. One moment you're on a flat road flanked by sugarcane, and then the road tilts, the air cools, and the forest closes in. I always forget how quickly everything changes.</p>
+        <blockquote>Mountains have a way of making your problems feel proportionate again.</blockquote>
+        <h2>The Coffee</h2>
+        <p>I've had filter coffee across south India, but there is something about a steel tumbler handed to you by a man who grew the beans himself, poured with that long theatrical arc that creates the froth, drunk while overlooking mist. It simply doesn't compare. I had four cups in two days. I regret nothing.</p>
+        <h2>Coming Back</h2>
+        <p>The drive back is always harder — not because of traffic, but because you've been reminded that this pace exists and is accessible and you simply choose not to access it most of the time. The Ghats stay with you for a few days like a smell you can't quite place.</p>
+      `
+    },
+    'post-3': {
+      tag:'Books', tagBg:'#fee2e2', tagColor:'#991b1b',
+      title:'5 Books That Changed How I See the World',
+      date:'Apr 28, 2026', readTime:'6 min read',
+      bannerBg:'linear-gradient(135deg,#fee2e2,#fecaca)', bannerEmoji:'📚',
+      content:`
+        <p>These aren't books that topped charts or showed up on every productivity influencer's shelf. They're quiet, peculiar books that arrived at the right moment and rearranged something fundamental in how I think.</p>
+        <h2>1. The Remains of the Day — Kazuo Ishiguro</h2>
+        <p>A book about a butler. Also a book about how we lie to ourselves so thoroughly we forget we're lying. I've thought about Stevens more times than I've thought about most real people I know.</p>
+        <h2>2. The Body Keeps the Score — Bessel van der Kolk</h2>
+        <p>Not an easy read. But understanding how trauma lives in the body rather than just the mind changed how I interpret my own reactions — and how I approach other people's.</p>
+        <blockquote>We do not see things as they are. We see them as we are.</blockquote>
+        <h2>3. Sapiens — Yuval Noah Harari</h2>
+        <p>Yes, everyone has read it. I almost didn't for that reason. Don't make my mistake. The section on money as a shared fiction alone is worth the whole book.</p>
+        <h2>4. The Plague — Albert Camus</h2>
+        <p>Read during the pandemic. Found it devastatingly accurate about how communities fracture and then, slowly, cohere. Fiction as reporting.</p>
+        <h2>5. Thinking in Systems — Donella Meadows</h2>
+        <p>A slim book that ruined every simple explanation I've encountered since. Once you see systems thinking, you can't unsee it — in traffic, in organisations, in ecosystems, in arguments.</p>
+      `
+    },
+    'post-4': {
+      tag:'Lifestyle', tagBg:'#fef9c3', tagColor:'#854d0e',
+      title:'Why I Started a Morning Routine (And Actually Kept It)',
+      date:'Apr 15, 2026', readTime:'3 min read',
+      bannerBg:'linear-gradient(135deg,#fef9c3,#fef08a)', bannerEmoji:'☕',
+      content:`
+        <p>I've tried morning routines before and abandoned them all. The problem, I eventually figured out, was that I was adopting other people's routines wholesale — and other people are not me.</p>
+        <h2>What I Actually Do</h2>
+        <p>Wake up. No phone for twenty minutes. Make coffee. Read something that isn't the news. That's it. No journaling (tried it, didn't stick). No exercise at dawn (I go for a walk in the evening instead, which I enjoy far more). No cold showers. Just coffee and something good to read.</p>
+        <blockquote>The best habit is the one you'll actually do tomorrow.</blockquote>
+        <h2>Why It Works</h2>
+        <p>Because it costs me almost nothing. Habits with low friction outlast habits with high ambition. I'm not fighting myself every morning. I'm doing something I genuinely want to do — and because I do it every day, it's now a settled, comfortable part of who I am.</p>
+        <h2>The Real Point</h2>
+        <p>Routines aren't about optimisation. They're about not having to make decisions before you're fully awake. Outsource the small choices to habit, and your actual thinking has more room to breathe.</p>
+      `
+    }
+  };
+
+  function showSection(id, linkEl) {
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('post-view').classList.remove('active');
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    if (linkEl) linkEl.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function openPost(postId) {
+    const p = POSTS[postId]; if (!p) return;
+    const tagEl = document.getElementById('post-tag-display');
+    tagEl.textContent = p.tag;
+    tagEl.style.background = p.tagBg;
+    tagEl.style.color = p.tagColor;
+    document.getElementById('post-title-display').textContent = p.title;
+    document.getElementById('post-meta-display').innerHTML = `<span>${p.date}</span><span>·</span><span>${p.readTime}</span>`;
+    const banner = document.getElementById('post-banner-display');
+    banner.style.background = p.bannerBg;
+    if (p.bannerImg) {banner.innerHTML = `<img src="${p.bannerImg}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:0;"/>`;}   else {banner.textContent = p.bannerEmoji;}
+    document.getElementById('post-content-display').innerHTML = p.content;
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('post-view').classList.add('active');
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    window.scrollTo(0, 0);
+  }
+
+  function closePost() {
+    document.getElementById('post-view').classList.remove('active');
+    showSection('home', document.querySelector('.nav-links a'));
+  }
+</script>
+</body>
+</html>
